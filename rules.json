@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "allow" },
+    "condition": {
+      "urlFilter": ".*\\.(mp4|webm|mp3|wav|jpg|png|gif)$", 
+      "resourceTypes": ["media"]
+    }
+  }
+]

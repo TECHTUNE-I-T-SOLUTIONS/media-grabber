@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Edge Media Grabber",
+  "version": "1.0",
+  "permissions": [
+    "storage",
+    "downloads",
+    "activeTab",
+    "declarativeNetRequest",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "/icons/icon.png"
+    }
+  },
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ]
+}

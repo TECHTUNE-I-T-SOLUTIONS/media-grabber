@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Edge Media Grabber</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 15px; width: 300px; }
+        label { display: block; margin: 10px 0; }
+        button { margin-top: 10px; padding: 8px; width: 100%; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h3>Choose Media Types to Download</h3>
+    <label><input type="checkbox" id="mp4" checked> Videos (.mp4, .webm)</label>
+    <label><input type="checkbox" id="mp3" checked> Audio (.mp3, .wav)</label>
+    <label><input type="checkbox" id="images" checked> Images (.jpg, .png, .gif)</label>
+    <button id="save">Save Settings</button>
+
+    <script src="options.js"></script>
+</body>
+</html>
