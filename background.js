@@ -28,7 +28,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "refreshMedia") {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length === 0) return;
-
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
                 function: scanForMedia
@@ -51,13 +50,20 @@ function scanForMedia() {
 
     mediaElements.forEach(media => {
         let src = media.src || media.getAttribute("src");
-        if (src && allowedExtensions.some(ext => src.endsWith(ext))) {
+        if (!src) return;
+
+        // Ensure the src is absolute
+        if (!src.startsWith("http")) {
+            let baseUrl = document.location.origin;
+            src = new URL(src, baseUrl).href;
+        }
+
+        if (allowedExtensions.some(ext => src.endsWith(ext))) {
             mediaList.push(src);
         }
     });
 
-    // Store the list of media URLs in chrome storage
-    chrome.storage.sync.set({ mediaList: mediaList }, () => {
+    chrome.storage.sync.set({ mediaList }, () => {
         console.log("Media list updated:", mediaList);
     });
 }

@@ -36,8 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 checkbox.value = url;
                 checkbox.checked = true;
 
+                let link = document.createElement("a");
+                link.href = url;
+                link.target = "_blank";
+                link.textContent = url.split('/').pop();
+                link.style.marginLeft = "10px";
+
                 item.appendChild(checkbox);
-                item.appendChild(document.createTextNode(url.split('/').pop()));
+                item.appendChild(link);
                 item.appendChild(qualitySelect);
                 mediaListDiv.appendChild(item);
             });
@@ -47,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Reload media list on "Reload" button click
     document.getElementById("reload").addEventListener("click", () => {
         chrome.runtime.sendMessage({ action: "refreshMedia" }, () => {
-            loadMediaList(); // Refresh the media list after scanning
+            setTimeout(loadMediaList, 500); // Delay to ensure media list updates
         });
     });
 
