@@ -1,69 +1,90 @@
-const allowedExtensions = [".mp4", ".webm", ".mp3", ".wav", ".jpg", ".png", ".gif"];
+let detectedMedia = [];
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "downloadMedia") {
-        let { url, quality } = message;
-
-        // Append quality to filename if applicable
-        let filename = url.split('/').pop().split('?')[0];
-        if (quality && quality !== "Original") {
-            filename = filename.replace(/(\.[a-z0-9]+)$/i, `_${quality}$1`);
-        }
-
-        chrome.downloads.download({
-            url: url,
-            filename: filename
-        }, (downloadId) => {
-            if (chrome.runtime.lastError) {
-                console.error("Download Error:", chrome.runtime.lastError.message);
-                sendResponse({ status: "error", message: chrome.runtime.lastError.message });
-            } else {
-                sendResponse({ status: "success", downloadId });
-            }
-        });
-
-        return true; // Keeps the message port open
+// Listen for completed web requests and add media URLs based on extensions.
+chrome.webRequest.onCompleted.addListener(
+  (details) => {
+    const url = details.url;
+    const mediaExtensions = ["mp4", "mp3", "webm", "ogg", "wav", "avi", "mov", "mkv", "jpg", "png", "gif", "jpeg"];
+    if (mediaExtensions.some(ext => url.toLowerCase().includes("." + ext)) &&
+        !detectedMedia.some(item => item.url === url)) {
+      // Determine quality for video files
+      const videoExtensions = ["mp4", "webm", "ogg", "avi", "mov", "mkv"];
+      let quality = null;
+      if (videoExtensions.some(ext => url.toLowerCase().includes("." + ext))) {
+        quality = "default";
+      }
+      detectedMedia.push({ url: url, quality: quality });
+      chrome.storage.sync.set({ mediaList: detectedMedia });
     }
+  },
+  { urls: ["<all_urls>"] }
+);
 
-    if (message.action === "refreshMedia") {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs.length === 0) return;
-            chrome.scripting.executeScript({
-                target: { tabId: tabs[0].id },
-                function: scanForMedia
-            }).then(() => {
-                sendResponse({ status: "success", message: "Media refreshed" });
-            }).catch((err) => {
-                console.error("Error executing script:", err);
-                sendResponse({ status: "error", message: err.message });
-            });
-        });
-
-        return true; // Keeps the message port open
+// Function to scan page for media links including <a>, <iframe>, and <video> elements.
+function scanForMediaLinks() {
+  const mediaLinks = [];
+  // Scan <a> elements.
+  const linkElements = document.querySelectorAll("a");
+  const mediaExtensions = ["mp4", "mp3", "webm", "jpg", "png", "gif", "jpeg", "avi", "mkv"];
+  linkElements.forEach(link => {
+    const href = link.href;
+    if (href && mediaExtensions.some(ext => href.toLowerCase().includes("." + ext))) {
+      mediaLinks.push({ url: href, quality: null });
     }
-});
-
-// Function to scan media on the page
-function scanForMedia() {
-    let mediaElements = document.querySelectorAll("video, audio, img, source");
-    let mediaList = [];
-
-    mediaElements.forEach(media => {
-        let src = media.src || media.getAttribute("src");
-        if (!src) return;
-
-        // Ensure the src is absolute
-        if (!src.startsWith("http")) {
-            let baseUrl = document.location.origin;
-            src = new URL(src, baseUrl).href;
+  });
+  
+  // Scan <iframe> elements for YouTube links.
+  const iframeElements = document.querySelectorAll("iframe");
+  iframeElements.forEach(iframe => {
+    const src = iframe.src;
+    if (src && src.toLowerCase().includes("youtube.com")) {
+      mediaLinks.push({ url: src, quality: "YouTube" });
+    }
+  });
+  
+  // Scan <video> elements.
+  const videoElements = document.querySelectorAll("video");
+  videoElements.forEach(video => {
+    const sources = video.querySelectorAll("source");
+    if (sources.length > 0) {
+      sources.forEach(source => {
+        const src = source.src;
+        // Use a custom data attribute (data-quality) if provided; otherwise default.
+        let quality = source.getAttribute("data-quality") || "default";
+        if (src) {
+          mediaLinks.push({ url: src, quality: quality });
         }
-
-        if (allowedExtensions.some(ext => src.endsWith(ext))) {
-            mediaList.push(src);
-        }
-    });
-
-    chrome.storage.sync.set({ mediaList }, () => {
-        console.log("Media list updated:", mediaList);
-    });
+      });
+    } else if (video.src) {
+      mediaLinks.push({ url: video.src, quality: "default" });
+    }
+  });
+  
+  if (mediaLinks.length) {
+    detectedMedia = mediaLinks; // Replace current list with scanned results.
+    chrome.storage.sync.set({ mediaList: detectedMedia });
+  }
 }
+
+// Listen for messages to refresh media or download media.
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "refreshMedia") {
+    // Query for the active tab in the current window.
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        chrome.scripting.executeScript({
+          target: { tabId: tabs[0].id },
+          func: scanForMediaLinks
+        }, () => {
+          sendResponse({ mediaList: detectedMedia });
+        });
+      } else {
+        sendResponse({ mediaList: detectedMedia });
+      }
+    });
+    return true; // Indicates asynchronous response.
+  } else if (message.action === "downloadMedia") {
+    // message.url is the chosen URL (e.g., corresponding to the selected quality)
+    chrome.downloads.download({ url: message.url });
+  }
+});

@@ -1,31 +1,29 @@
 {
-  "manifest_version": 3,
-  "name": "Edge Media Grabber",
-  "version": "1.0",
-  "permissions": [
-    "storage",
-    "downloads",
-    "activeTab",
-    "declarativeNetRequest",
-    "scripting"
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+    "manifest_version": 3,
+    "name": "Edge Media Grabber",
+    "version": "1.0",
+    "description": "Download media from webpages",
+    "permissions": [
+      "downloads",
+      "storage",
+      "activeTab",
+      "scripting",
+      "webRequest",
+      "webRequestBlocking"
+    ],
+    "host_permissions": [
+      "<all_urls>"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icons/myicon16.png",
+        "48": "icons/myicon48.png",
+        "128": "icons/myicon128.png"
+      }
     }
-  ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "/icons/icon.png"
-    }
-  },
-  "host_permissions": [
-    "http://*/*",
-    "https://*/*"
-  ]
-}
+  }
+  

@@ -1,0 +1,282 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    border-radius: 5px;
+    width: 320px;
+}
+
+/* Extension Icon Styling */
+.extension-icon {
+    object-position: center;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.iconcontainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Style media item container */
+.media-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #0f1b3d;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.media-item:hover {
+    background-color: #1e2a47;
+}
+
+.media-item a {
+    color: #fff;
+    text-decoration: none;
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.media-item input[type="checkbox"] {
+    margin-left: 10px;
+}
+
+/* Optional: frame for media items */
+.media-item-wrapper {
+    background-color: #16213e;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #0f3460;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Button styles */
+button {
+    background: linear-gradient(135deg, #0f3460, #533483);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #533483, #0f3460);
+    transform: scale(1.05);
+}
+
+/* Select All Button */
+#selectAll {
+    background-color: #533483;
+    color: white;
+    border: none;
+    padding: 8px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+#selectAll:hover {
+    background-color: #0f3460;
+}
+
+/* Media list styling */
+.media-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #0f1b3d;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.button-group button {
+    flex: 1;
+    border-radius: 12px;
+}
+
+/* Settings Popup Styling */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    width: 260px;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.media-options label {
+    display: block;
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.spin-animation {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes downloading {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+.downloading {
+    animation: downloading 1s infinite;
+}
+
+@keyframes buttonClick {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+.button-clicked {
+    animation: buttonClick 0.3s ease-in-out;
+}
+/* Existing styles ... */
+
+.popup-content h2 i {
+    margin-right: 10px;
+}
+
+.popup-content label i {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.popup-content button i {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* Optional: Increase icon sizes in labels if desired */
+.popup-content h2 i,
+.popup-content label i,
+.popup-content button i {
+    font-size: 1rem;
+}
+
+/* You can also adjust spacing for media-options if needed */
+.media-options label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Light mode overrides */
+.light-mode {
+    background: linear-gradient(135deg, #e0eafc, #cfdef3); /* Light gradient background */
+    color: #007BFF; /* Blue text */
+}
+
+.light-mode h1,
+.light-mode h2,
+.light-mode p,
+.light-mode label {
+    color: #007BFF; /* Blue text for headings and labels */
+}
+
+.light-mode .media-list {
+    background: #f0f8ff; /* Light background for media list */
+}
+
+.light-mode .media-link {
+    color: #007BFF; /* Blue text for media items */
+}
+
+.light-mode button {
+    background: #f8f9fa; /* Light button background */
+    color: #007BFF; /* Blue text on buttons */
+    border: 1px solid #007BFF;
+}
+
+.light-mode button:hover {
+    background: #e2e6ea;
+}
+
+.light-mode #selectAll {
+    background-color: #e2e6ea;
+    color: #007BFF;
+}
+
+.light-mode #reload {
+    background-color: #e2e6ea;
+    color: #007BFF;
+}
+
+.light-mode .button-group button {
+    background-color: #e2e6ea;
+    color: #007BFF;
+}
+
+/* Alert Message Styles */
+.alert-message {
+    background-color: #ffc107; /* Amber color for alert */
+    color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.alert-message .alert-content {
+    display: flex;
+    align-items: center;
+}
+
+.alert-message i {
+    margin-right: 8px;
+}
+
+.alert-close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1rem;
+}
+

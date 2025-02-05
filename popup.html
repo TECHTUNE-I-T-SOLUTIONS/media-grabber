@@ -1,65 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edge Media Grabber</title>
-    <style>
-        :root {
-            --bg-color: #1e1e1e;
-            --text-color: white;
-            --btn-color: #00aaff;
-            --btn-hover: #0088cc;
-        }
-
-        body.light-mode {
-            --bg-color: #ffffff;
-            --text-color: #333;
-            --btn-color: #0077cc;
-            --btn-hover: #0055aa;
-        }
-
-        body { font-family: Arial, sans-serif; width: 320px; padding: 10px; background: var(--bg-color); color: var(--text-color); transition: 0.3s; }
-        h3 { color: var(--btn-color); text-align: center; }
-        #mediaList, #settingsPage { max-height: 250px; overflow-y: auto; background: #333; padding: 10px; border-radius: 5px; }
-        .media-item { display: flex; align-items: center; justify-content: space-between; padding: 5px; border-bottom: 1px solid #555; }
-        .media-item select { margin-left: 10px; }
-        .btn-container { display: flex; justify-content: space-between; margin-top: 10px; }
-        button { flex: 1; padding: 8px; margin: 5px; border: none; cursor: pointer; border-radius: 15px; background: var(--btn-color); color: white; transition: 0.3s; }
-        button:hover { background: var(--btn-hover); }
-        #reload, #themeToggle { background: #ffaa00; }
-        #settings, #back { background: #ff6600; }
-        #mainPage, #settingsPage { display: none; animation: fadeIn 0.5s ease-in-out; }
-        #mainPage.active, #settingsPage.active { display: block; }
-        img { display: block; margin: 10px auto; width: 50px; }
-        .top-bar { display: flex; justify-content: space-between; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edge Media Grabber</title>
+  <link rel="stylesheet" href="popup.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="top-bar">
-        <button id="reload">🔄 Reload</button>
-        <button id="themeToggle">🌞/🌙</button>
-    </div>
-    <img src="/icons/icon.png" alt="Extension Icon">
-    <div id="mainPage" class="active">
-        <h3>Detected Media</h3>
-        <div id="mediaList"></div>
-        <div class="btn-container">
-            <button id="downloadSelected">Download</button>
-            <button id="settings">Settings</button>
-        </div>
+  <div id="Popuppage" class="container">
+    <!-- Alert Message Container (hidden by default) -->
+    <div id="alertMessage" class="alert-message" style="display: none;">
+      <div class="alert-content">
+        <i class="fa-solid fa-info-circle"></i>
+        <span id="alertText"></span>
+      </div>
+      <button id="alertClose" class="alert-close">
+        <i class="fa-solid fa-times"></i>
+      </button>
     </div>
 
-    <div id="settingsPage">
-        <h3>Settings</h3>
-        <label><input type="checkbox" id="mp4" checked> Videos (.mp4, .webm)</label>
-        <label><input type="checkbox" id="mp3" checked> Audio (.mp3, .wav)</label>
-        <label><input type="checkbox" id="images" checked> Images (.jpg, .png, .gif)</label>
-        <button id="saveSettings">Save Settings</button>
-        <button id="back">Back</button>
+    <div class="iconcontainer">
+      <img src="icons/icon.png" alt="Extension Icon" class="extension-icon">
     </div>
+    <h1>Edge Media Grabber</h1>
 
-    <script src="popup.js"></script>
+    <!-- Select All button -->
+    <button id="selectAll">
+      <i class="fa-solid fa-check-square"></i> Select All
+    </button>
+
+    <!-- Refresh button -->
+    <button id="reload">
+      <i class="fa-solid fa-rotate-right"></i> Refresh Media
+    </button>
+
+    <div id="mediaList" class="media-list"></div>
+
+    <div class="button-group">
+      <button id="downloadSelected">
+        <i class="fa-solid fa-download"></i> Download Selected
+      </button>
+      <button id="settings">
+        <i class="fa-solid fa-gear"></i> Settings
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Popup -->
+  <div id="settingsPopup" class="popup">
+    <div class="popup-content">
+      <h2><i class="fa-solid fa-sliders"></i> Settings</h2>
+      <label><i class="fa-solid fa-palette"></i> Theme:</label>
+      <select id="themeSelect">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+
+      <label><i class="fa-solid fa-photo-film"></i> Media Types:</label>
+      <div class="media-options">
+        <label>
+          <input type="checkbox" id="video" checked> 
+          <i class="fa-solid fa-video"></i> Videos
+        </label>
+        <label>
+          <input type="checkbox" id="audio" checked> 
+          <i class="fa-solid fa-music"></i> Audio
+        </label>
+        <label>
+          <input type="checkbox" id="images" checked> 
+          <i class="fa-solid fa-image"></i> Images
+        </label>
+      </div>
+
+      <button id="saveSettings"><i class="fa-solid fa-check"></i> Save</button>
+      <button id="closeSettings"><i class="fa-solid fa-times"></i> Close</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
 </body>
 </html>
