@@ -1,6 +1,7 @@
 let detectedMedia = [];
 
-// Listen for completed web requests and add media URLs based on extensions.
+
+// Listens for completed web requests and add media URLs based on extensions.
 chrome.webRequest.onCompleted.addListener(
   (details) => {
     const url = details.url;
