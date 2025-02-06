@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
                 let checkbox = document.createElement("input");
                 checkbox.type = "checkbox";
-                // Set default value to the first URL.
+                // Default value is the first URL.
                 checkbox.value = group[0].url;
                 checkbox.checked = true;
     
@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     group.forEach(optionItem => {
                         let option = document.createElement("option");
                         option.value = optionItem.url;
-                        // Display the quality label; if quality is "default" or null, show "Default"
                         option.textContent = (optionItem.quality && optionItem.quality !== "default") ? optionItem.quality : "Default";
                         select.appendChild(option);
                     });
@@ -56,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     itemDiv.appendChild(select);
                 } else if (group[0].quality && group[0].quality !== "default" && group[0].quality !== "YouTube") {
-                    // Optionally, for a single quality option that is not "default" or "YouTube", display it.
                     let qualityLabel = document.createElement("span");
                     qualityLabel.textContent = group[0].quality;
                     qualityLabel.style.marginLeft = "10px";
@@ -113,6 +111,16 @@ document.addEventListener("DOMContentLoaded", () => {
         checkboxes.forEach(cb => cb.checked = !allChecked);
     });
     
+    // Clear Media functionality.
+    document.getElementById("clearMedia").addEventListener("click", () => {
+        chrome.storage.sync.remove("mediaList", () => {
+            // Clear our in-memory media list as well.
+            // Optionally, you could also set detectedMedia = [] in the background.
+            loadMediaList();
+            showAlert("Media list cleared.");
+        });
+    });
+    
     // Initial load of media list.
     loadMediaList();
     
@@ -146,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         settingsPopup.style.display = "none";
     });
     
-    // Save settings and apply theme changes.
+    // Save settings and apply theme changes with a styled alert.
     document.getElementById("saveSettings").addEventListener("click", () => {
         const theme = document.getElementById("themeSelect").value;
         const mediaTypes = {
@@ -156,10 +164,8 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     
         chrome.storage.sync.set({ theme, mediaTypes }, () => {
-            // Instead of alert(), show a styled message.
             showAlert("Settings saved!");
             settingsPopup.style.display = "none";
-    
             applyTheme(theme);
         });
     });
@@ -179,11 +185,93 @@ document.addEventListener("DOMContentLoaded", () => {
         const alertText = document.getElementById("alertText");
         alertText.textContent = message;
         alertDiv.style.display = "flex";
+        alertDiv.classList.remove("hide");
+        // Automatically fade out after 7 seconds.
+        setTimeout(() => {
+            alertDiv.classList.add("hide");
+            setTimeout(() => {
+                alertDiv.style.display = "none";
+            }, 1000);
+        }, 3000);
     }
     
     // Close alert when clicking its close button.
     document.getElementById("alertClose").addEventListener("click", () => {
-        document.getElementById("alertMessage").style.display = "none";
+        const alertDiv = document.getElementById("alertMessage");
+        alertDiv.classList.add("hide");
+        setTimeout(() => {
+            alertDiv.style.display = "none";
+        }, 1000);
+    });
+    
+    // Manual Download Popup handling.
+    let manualPopup = document.getElementById("manualDownloadPopup");
+    document.getElementById("openManual").addEventListener("click", () => {
+        manualPopup.style.display = "block";
+    });
+    document.getElementById("closeManualPopup").addEventListener("click", () => {
+        manualPopup.style.display = "none";
+    });
+    
+    // Fetch manual data using Apify API.
+    document.getElementById("fetchManualData").addEventListener("click", () => {
+        const url = document.getElementById("manualUrl").value.trim();
+        if (!url) {
+            showAlert("Please enter a URL.");
+            return;
+        }
+    
+        // Call Apify API to run the actor with input { url: url }.
+        fetch("https://api.apify.com/v2/acts/easyapi~all-in-one-media-downloader/runs?token=apify_api_xox3aUN4Q1klL4xBSst8dIxljwlhiX1Kuij6", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ url: url })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Assume the actor returns its output immediately in data.data.output.
+            const output = data.data && data.data.output;
+            const resultsDiv = document.getElementById("manualResults");
+            resultsDiv.innerHTML = "";
+    
+            if (!output || !output.results || !output.results.length) {
+                resultsDiv.innerHTML = "<p>No media found.</p>";
+                document.getElementById("manualDownloadBtn").style.display = "none";
+                return;
+            }
+    
+            // Create a dropdown with the quality options.
+            let select = document.createElement("select");
+            output.results.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item.downloadUrl;
+                option.textContent = item.quality ? item.quality : "Default";
+                select.appendChild(option);
+            });
+            resultsDiv.appendChild(select);
+            document.getElementById("manualDownloadBtn").style.display = "block";
+    
+            // Optionally store the selection if needed.
+        })
+        .catch(err => {
+            console.error(err);
+            showAlert("Error fetching data from Apify.");
+        });
+    });
+    
+    // Manual download button.
+    document.getElementById("manualDownloadBtn").addEventListener("click", () => {
+        const select = document.querySelector("#manualResults select");
+        if (select && select.value) {
+            chrome.runtime.sendMessage({
+                action: "downloadMedia",
+                url: select.value
+            });
+        } else {
+            showAlert("No download URL selected.");
+        }
     });
     
     // Load saved theme on start.

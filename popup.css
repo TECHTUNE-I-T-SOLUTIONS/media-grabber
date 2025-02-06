@@ -30,6 +30,13 @@ body {
     gap: 15px;
 }
 
+/* Top buttons container (for Select All and Clear) */
+.top-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
 /* Style media item container */
 .media-item {
     display: flex;
@@ -47,7 +54,8 @@ body {
     background-color: #1e2a47;
 }
 
-.media-item a {
+.media-item a,
+.media-item span {
     color: #fff;
     text-decoration: none;
     flex-grow: 1;
@@ -89,8 +97,24 @@ button:hover {
     transform: scale(1.05);
 }
 
+/* Select All and Clear Buttons (top buttons) */
+#selectAll, #clearMedia {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+
+#clearMedia {
+    background-color: #dc3545; /* Red color for clear */
+    color: white;
+}
+
+#clearMedia:hover {
+    background-color: #c82333;
+}
 /* Select All Button */
-#selectAll {
+/*#selectAll {
     background-color: #533483;
     color: white;
     border: none;
@@ -100,8 +124,8 @@ button:hover {
     border-radius: 8px;
     transition: all 0.3s;
 }
-
-#selectAll:hover {
+*/
+#selectAll, #clearMedia:hover {
     background-color: #0f3460;
 }
 
@@ -148,6 +172,14 @@ button:hover {
 
 .media-options label {
     display: block;
+}
+
+/* Input field styling for manual popup */
+#manualUrl {
+    width: 93%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 }
 
 /* Animations */
@@ -253,7 +285,7 @@ button:hover {
 
 /* Alert Message Styles */
 .alert-message {
-    background-color: #ffc107; /* Amber color for alert */
+    background-color: #917DB2; /* Amber color for alert */
     color: #333;
     padding: 10px;
     border-radius: 5px;
@@ -261,6 +293,12 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+}
+
+.alert-message.hide {
+    opacity: 0;
 }
 
 .alert-message .alert-content {

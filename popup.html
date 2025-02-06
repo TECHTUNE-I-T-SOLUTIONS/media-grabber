@@ -10,7 +10,7 @@
 </head>
 <body>
   <div id="Popuppage" class="container">
-    <!-- Alert Message Container (hidden by default) -->
+    <!-- Alert Message Container (for styled alerts) -->
     <div id="alertMessage" class="alert-message" style="display: none;">
       <div class="alert-content">
         <i class="fa-solid fa-info-circle"></i>
@@ -26,14 +26,25 @@
     </div>
     <h1>Edge Media Grabber</h1>
 
-    <!-- Select All button -->
-    <button id="selectAll">
-      <i class="fa-solid fa-check-square"></i> Select All
-    </button>
+    <div class="top-buttons">
+      <!-- Select All button -->
+      <button id="selectAll">
+        <i class="fa-solid fa-check-square"></i> Select All
+      </button>
+      <!-- Clear Media button -->
+      <button id="clearMedia">
+        <i class="fa-solid fa-trash"></i> Clear
+      </button>
+    </div>
 
     <!-- Refresh button -->
     <button id="reload">
       <i class="fa-solid fa-rotate-right"></i> Refresh Media
+    </button>
+
+    <!-- Manual Download button -->
+    <button id="openManual">
+      <i class="fa-solid fa-download"></i> Manual Download
     </button>
 
     <div id="mediaList" class="media-list"></div>
@@ -76,6 +87,20 @@
 
       <button id="saveSettings"><i class="fa-solid fa-check"></i> Save</button>
       <button id="closeSettings"><i class="fa-solid fa-times"></i> Close</button>
+    </div>
+  </div>
+
+  <!-- Manual Download Popup -->
+  <div id="manualDownloadPopup" class="popup">
+    <div class="popup-content">
+      <h2><i class="fa-solid fa-download"></i> Manual Download</h2>
+      <label><i class="fa-solid fa-link"></i> Enter URL:</label>
+      <input type="text" id="manualUrl" placeholder="Enter media URL" />
+      <button id="fetchManualData"><i class="fa-solid fa-magnifying-glass"></i> Fetch Data</button>
+      <!-- Container to display fetched quality options -->
+      <div id="manualResults"></div>
+      <button id="manualDownloadBtn" style="display: none;"><i class="fa-solid fa-download"></i> Download</button>
+      <button id="closeManualPopup"><i class="fa-solid fa-times"></i> Close</button>
     </div>
   </div>
 
